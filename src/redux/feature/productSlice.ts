@@ -84,12 +84,16 @@ const productsSlice = createSlice({
             const foundProduct = state.products.find((product) => product?.id === id);
 
             if (foundProduct) {
-                // Merge the new data with the existing product
+                const prevImg = foundProduct?.imageURL || []; // Ensure prevImg is an array
+                console.log('prevImg', prevImg);
+                console.log('imageURL', imageURL)
                 const updatedProduct = {
                     ...foundProduct,
-                    imageURL
+                    imageURL: {
+                        ...prevImg, // Spread the existing images
+                        ...(imageURL || []) // Spread the new images, defaulting to an empty array if undefined
+                    }
                 };
-
                 // Replace the old product with the updated one
                 state.products = state.products.map(product =>
                     product.id === id ? updatedProduct : product
