@@ -35,7 +35,7 @@ export const InventoryDetails = () => {
     const [ids, setIds] = useState<string | null>("");
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const { products } = useSelector((state: RootState) => state.products);
+    const { products } = useSelector((state: RootState) => state.products) as any;
     console.log('PRODUCTS', products);
     const existingProduct = products.find((product: any) => product.id === ids) as IEType;
     console.log('exist', existingProduct);

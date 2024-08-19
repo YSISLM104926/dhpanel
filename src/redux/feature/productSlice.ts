@@ -15,6 +15,7 @@ interface Product {
     extraprice?: number | undefined;
     taxAmount?: number | undefined;
     error?: boolean;
+    imageURL?: string[];
 }
 
 interface ProductsState {
@@ -78,9 +79,29 @@ const productsSlice = createSlice({
                 console.error(`Product with id ${id} not found`);
             }
         },
+        getDataAndMergeWithImage: (state, action: PayloadAction<Product>) => {
+            const { imageURL, id } = action.payload;
+            const foundProduct = state.products.find((product) => product?.id === id);
+
+            if (foundProduct) {
+                // Merge the new data with the existing product
+                const updatedProduct = {
+                    ...foundProduct,
+                    imageURL
+                };
+
+                // Replace the old product with the updated one
+                state.products = state.products.map(product =>
+                    product.id === id ? updatedProduct : product
+                );
+            } else {
+                state.products.push({ id, error: true })
+                console.error(`Product with id ${id} not found`);
+            }
+        },
     },
 });
 
-export const { addProduct, deleteProduct, getSingleProduct, getDataAndMerge } = productsSlice.actions;
+export const { addProduct, deleteProduct, getSingleProduct, getDataAndMerge, getDataAndMergeWithImage } = productsSlice.actions;
 
 export default productsSlice.reducer;

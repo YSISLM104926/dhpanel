@@ -1,8 +1,9 @@
 import { RootState } from "../redux/store";
 import { useAppSelector } from "../redux/hook";
+import { Avatar, AvatarGroup } from "@mui/material";
 const Review = () => {
     let data = useAppSelector((state: RootState) => state.products.products)
-    console.log(data);
+    console.log(data[0]?.imageURL);
     return (
         <div className="w-full">
             <div className="shadow-md sm:rounded-lg">
@@ -29,11 +30,15 @@ const Review = () => {
                             data?.map((d: any, index: number) => (
                                 <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                     <td className="px-6 py-4">
-                                        <img
-                                            className="w-10 h-10 rounded"
-                                            src="/path/to/product-image.jpg"
-                                            alt="Product Image"
-                                        />
+                                        <div>
+                                            <AvatarGroup max={Object.entries(d?.imageURL).length}>
+                                                {
+                                                    Object.entries(d?.imageURL).map(([key, url]) => (
+                                                        <Avatar key={key} src={url as any} alt="" />
+                                                    ))
+                                                }
+                                            </AvatarGroup>
+                                        </div>
                                     </td>
                                     <td className="px-6 py-4">{d.id}</td>
                                     <td className="px-6 py-4">{d.productTitle}</td>
