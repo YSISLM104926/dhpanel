@@ -30,7 +30,7 @@ export const AddItem = () => {
 
     const onSubmit = handleSubmit((data) => {
         const id = uuidv4();
-        const newData = { ...data, status: 'In Stock', id };
+        const newData = { ...data, status: 'Out of Stock', id };
         console.log(newData);
         dispatch(addProduct(newData as any))
         toast.success('Item added successfully');

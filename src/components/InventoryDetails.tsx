@@ -4,8 +4,16 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import { Button } from '@mui/material';
 import { useForm } from 'react-hook-form';
+import { useAppDispatch } from '../redux/hook';
+import { getDataAndMerge } from '../redux/feature/productSlice';
+import { useNavigate } from 'react-router-dom';
+import { toast, Toaster } from 'sonner';
+import { RootState } from '../redux/store';
+import { useSelector } from 'react-redux';
+import { useState } from 'react';
 
 type FormValues = {
+    id: string;
     weight: number;
     length: number;
     height: number;
@@ -13,18 +21,43 @@ type FormValues = {
     totalstock: number;
 };
 
+interface IEType {
+    id: string | undefined;
+    error: boolean | undefined;
+}
+
 export const InventoryDetails = () => {
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm<FormValues>();
+    const [ids, setIds] = useState<string | null>("");
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+    const { products } = useSelector((state: RootState) => state.products);
+    console.log('PRODUCTS', products);
+    const existingProduct = products.find((product: any) => product.id === ids) as IEType;
+    console.log('exist', existingProduct);
+    const onSubmit = handleSubmit((data) => {
+        console.log('Producctt', data);
+        const productId = data.id;
+        setIds(productId);
+        if (existingProduct?.error === true) {
+            console.error('Error: Product not found');
+            toast.success('Product not found');
+        } else {
+            dispatch(getDataAndMerge(data));
+            navigate('/');
+            toast.success('Inventory Added Successfully');
+        }
 
-    const onSubmit = handleSubmit((data) => console.log(data));
+    });
 
     return (
         <Box>
             <form onSubmit={onSubmit}>
+                <Toaster />
                 <div>
                     <h1 className="text-start text-4xl mb-6 mt-16">ADD INVENTORY</h1>
                 </div>
@@ -35,7 +68,7 @@ export const InventoryDetails = () => {
                             id="id"
                             type='text'
                             label="id"
-                            {...register("weight", { required: "Weight is required" })}
+                            {...register("id", { required: "Id is required" })}
                         />
                         {errors?.weight && <p className='text-start text-red-500'>{errors.weight.message}</p>}
                     </FormControl>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, OutlinedInput, Typography } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Badge from '@mui/material/Badge';
 const AddPhoto = () => {
@@ -49,6 +49,18 @@ const AddPhoto = () => {
                         ))
                         }
                     </Box>
+                    <div className='mt-12'>
+                        <FormControl variant="outlined">
+                            <InputLabel htmlFor="id">ID</InputLabel>
+                            <OutlinedInput
+                                id="id"
+                                type='text'
+                                label="id"
+                            // {...register("id", { required: "Id is required" })}
+                            />
+                            {/* {errors?.weight && <p className='text-start text-red-500'>{errors.weight.message}</p>} */}
+                        </FormControl>
+                    </div>
                     <>
                         {selectedImages.length > 0 && (
                             <>

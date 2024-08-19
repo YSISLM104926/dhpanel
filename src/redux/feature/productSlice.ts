@@ -1,19 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface Product {
-    id: string;
-    productTitle: string;
-    description: string;
-    category: string;
-    status: string;
-    regularPrice: number;
-    extraprice: number;
-    taxAmount: number;
-    weight: number;
-    length: number;
-    height: number;
-    width: number;
-    totalstock: number;
+    height?: number;
+    length?: number;
+    weight?: number;
+    width?: number;
+    totalstock?: number | undefined;
+    id?: string | undefined;
+    productTitle?: string | undefined;
+    description?: string | undefined;
+    category?: string | undefined;
+    status?: string | undefined;
+    regularPrice?: number | undefined;
+    extraprice?: number | undefined;
+    taxAmount?: number | undefined;
+    error?: boolean;
 }
 
 interface ProductsState {
@@ -36,20 +37,50 @@ const productsSlice = createSlice({
         deleteProduct: (state, action: PayloadAction<number>) => {
             state.products = state.products.filter((product: any) => product.id !== action.payload);
         },
-        updateProduct: (state, action: PayloadAction<{ id: number; updatedProduct: Product }>) => {
-            const { id, updatedProduct } = action.payload;
-            const index = state.products.findIndex((product: any) => product.id === id);
-            if (index !== -1) {
-                state.products[index] = updatedProduct;
-            }
-        },
+        // updateProduct: (state, action: PayloadAction<{ id: number; updatedProduct: Product }>) => {
+        //     const { id, updatedProduct } = action.payload;
+        //     const index = state.products.findIndex((product: any) => product.id === id);
+        //     if (index !== -1) {
+        //         state.products[index] = updatedProduct;
+        //     }
+        // },
         getSingleProduct: (state, action: PayloadAction<number>) => {
             const foundProduct = state.products.find((product: any) => product.id === action.payload);
             state.singleProduct = foundProduct || null;
         },
+        getDataAndMerge: (state, action: PayloadAction<Product>) => {
+            const { id, height, length, weight, width, totalstock } = action.payload;
+            const foundProduct = state.products.find((product) => product.id === id);
+
+            if (foundProduct) {
+                if ((totalstock as any) > 0) {
+                    foundProduct.status = 'In Stock';
+                } else {
+                    foundProduct.status = 'Out of Stock';
+                }
+
+                // Merge the new data with the existing product
+                const updatedProduct = {
+                    ...foundProduct,
+                    height,
+                    length,
+                    weight,
+                    width,
+                    totalstock
+                };
+
+                // Replace the old product with the updated one
+                state.products = state.products.map(product =>
+                    product.id === id ? updatedProduct : product
+                );
+            } else {
+                state.products.push({ id, error: true })
+                console.error(`Product with id ${id} not found`);
+            }
+        },
     },
 });
 
-export const { addProduct, deleteProduct, updateProduct, getSingleProduct } = productsSlice.actions;
+export const { addProduct, deleteProduct, getSingleProduct, getDataAndMerge } = productsSlice.actions;
 
 export default productsSlice.reducer;
