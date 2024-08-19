@@ -4,6 +4,8 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import Modal from '@mui/material/Modal';
 import { useState } from 'react';
+import { useAppSelector } from '../redux/hook';
+import { RootState } from '../redux/store';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -21,7 +23,7 @@ export default function TableData() {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const columns: GridColDef<(typeof rows)[number]>[] = [
+    const columns: GridColDef<(typeof data)[number]>[] = [
         { field: 'id', headerName: 'ID', width: 90 },
         {
             field: 'productTitle',
@@ -30,7 +32,7 @@ export default function TableData() {
             editable: true,
         },
         {
-            field: 'details',
+            field: 'description',
             headerName: 'DETAILS',
             width: 150,
             editable: true,
@@ -40,12 +42,12 @@ export default function TableData() {
             headerName: 'STATUS',
             width: 150,
             renderCell: (params) => (
-                <Chip label={params.value} variant="outlined" />
+                <Chip sx={{ backgroundColor: '#E0F7F1', color: '#2EBF85', fontWeight: '600' }} label={params.value} />
             ),
             editable: true,
         },
         {
-            field: 'productCategory',
+            field: 'category',
             headerName: 'PRODUCT CATEGORY',
             width: 220,
             editable: true,
@@ -74,20 +76,15 @@ export default function TableData() {
         }
     ];
 
-    const rows = [
-        {
-            id: 1, productTitle: 'Snow',
-            details: 'Jon', status: 'In Stock',
-            productCategory: 'ddddd', regularPrice: '$33',
-            extraprice: '$35',
-        },
+    let data = useAppSelector((state: RootState) => state.products.products)
+    console.log(data);
 
-    ];
+
     return (
         <Box>
             <Box sx={{ height: 400, width: '100%' }}>
                 <DataGrid
-                    rows={rows}
+                    rows={data}
                     columns={columns}
                     initialState={{
                         pagination: {
