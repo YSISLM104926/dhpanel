@@ -38,6 +38,10 @@ export default function TableData() {
         setSelectedId(id as any);
         console.log('procu', product);
     };
+    const handleDelete = (id?: any) => {
+        dispatch(deleteProduct(id));
+        setOpen(false);
+    }
     const handleClose = () => {
         setOpen(false);
     }
@@ -170,7 +174,7 @@ export default function TableData() {
                             marginTop: '10px'
                         }}>
                             <Button sx={{ backgroundColor: '#E0F7F1', color: '#2EBF85', fontWeight: '600' }} >Update</Button>
-                            <Button sx={{ backgroundColor: '#F7E0E0', color: '#BF2E2E', fontWeight: '600', marginLeft: '15px' }} >Delete</Button>
+                            <Button onClick={() => handleDelete(product?.id as any)} sx={{ backgroundColor: '#F7E0E0', color: '#BF2E2E', fontWeight: '600', marginLeft: '15px' }} >Delete</Button>
                         </Box>
                     </Box>
                 </Modal>
