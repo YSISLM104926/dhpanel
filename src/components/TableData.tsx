@@ -3,9 +3,11 @@ import Box from '@mui/material/Box';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import Modal from '@mui/material/Modal';
-import { useState } from 'react';
-import { useAppSelector } from '../redux/hook';
+import { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../redux/hook';
 import { RootState } from '../redux/store';
+import { deleteProduct, getSingleProduct } from '../redux/feature/productSlice';
+import { useSelector } from 'react-redux';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -19,10 +21,26 @@ const style = {
     p: 4,
 };
 
+interface ISingleDataType {
+    id: any
+}
+
 export default function TableData() {
+    const dispatch = useAppDispatch();
     const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const [selectedId, setSelectedId] = useState<number | null>(null);
+    useEffect(() => {
+        dispatch(getSingleProduct(selectedId as any));
+    }, [dispatch, selectedId]);
+    const product = useSelector((state: RootState) => state.products.singleProduct) as any;
+    const handleOpen = (id?: ISingleDataType) => {
+        setOpen(true)
+        setSelectedId(id as any);
+        console.log('procu', product);
+    };
+    const handleClose = () => {
+        setOpen(false);
+    }
     const columns: GridColDef<(typeof data)[number]>[] = [
         { field: 'id', headerName: 'ID', width: 90 },
         {
@@ -70,7 +88,7 @@ export default function TableData() {
             width: 150,
             renderCell: (params) => (
                 <div>
-                    <Button onClick={handleOpen}><MoreHorizIcon /></Button>
+                    <Button onClick={() => handleOpen(params.id as any)}><MoreHorizIcon /></Button>
                 </div>
             ),
         }
@@ -111,11 +129,49 @@ export default function TableData() {
                 >
                     <Box sx={style}>
                         <Typography id="modal-modal-title" variant="h6" component="h2">
-                            Text in a modal
+                            ID: {product?.id as any}
+                        </Typography>
+                        <Typography id="modal-modal-title" variant="h6" component="h2">
+                            Item Title: {product?.productTitle as any}
                         </Typography>
                         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                            Details: {product?.description}
                         </Typography>
+                        <div className='grid grid-cols-2 lg:grid-cols-4'>
+                            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                Category: {product?.category}
+                            </Typography>
+                            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                Details: {product?.regularPrice}
+                            </Typography>
+                            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                Extra Price: {product?.extraprice}
+                            </Typography>
+                            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                Tax Amount: {product?.taxAmount}
+                            </Typography>
+                            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                Weight: {product?.weight}
+                            </Typography>
+                            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                Length: {product?.length}
+                            </Typography>
+                            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                height: {product?.height}
+                            </Typography>
+                            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                Width: {product?.width}
+                            </Typography>
+                            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                Total Stock: {product?.totalstock}
+                            </Typography>
+                        </div>
+                        <Box sx={{
+                            marginTop: '10px'
+                        }}>
+                            <Button sx={{ backgroundColor: '#E0F7F1', color: '#2EBF85', fontWeight: '600' }} >Update</Button>
+                            <Button sx={{ backgroundColor: '#F7E0E0', color: '#BF2E2E', fontWeight: '600', marginLeft: '15px' }} >Delete</Button>
+                        </Box>
                     </Box>
                 </Modal>
             </div>

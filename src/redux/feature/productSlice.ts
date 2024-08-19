@@ -18,10 +18,12 @@ interface Product {
 
 interface ProductsState {
     products: Product[];
+    singleProduct: Product | null;
 }
 
 const initialState: ProductsState = {
     products: [],
+    singleProduct: null,
 };
 
 const productsSlice = createSlice({
@@ -41,9 +43,13 @@ const productsSlice = createSlice({
                 state.products[index] = updatedProduct;
             }
         },
+        getSingleProduct: (state, action: PayloadAction<number>) => {
+            const foundProduct = state.products.find((product: any) => product.id === action.payload);
+            state.singleProduct = foundProduct || null;
+        },
     },
 });
 
-export const { addProduct, deleteProduct, updateProduct } = productsSlice.actions;
+export const { addProduct, deleteProduct, updateProduct, getSingleProduct } = productsSlice.actions;
 
 export default productsSlice.reducer;
